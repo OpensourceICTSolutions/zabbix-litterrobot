@@ -1,0 +1,224 @@
+zabbix_export:
+  version: '6.2'
+  date: '2022-12-24T23:36:49Z'
+  template_groups:
+    -
+      uuid: fb2cb3f577c841709b16db20ff669757
+      name: Templates/Home
+  templates:
+    -
+      uuid: 6f76003ccb5e42da963210dbecd89f0a
+      template: 'Litterrobot API by HTTP'
+      name: 'Litterrobot API by HTTP'
+      groups:
+        -
+          name: Templates/Home
+      items:
+        -
+          uuid: d08454426e744cedb6589f5c6c86eb3e
+          name: 'Cycles: Completed today'
+          type: DEPENDENT
+          key: clean.cycle.complete
+          delay: '0'
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - '$.data[0].CCC'
+          master_item:
+            key: 'get.activity[{$ROBOT.USERNAME},{$ROBOT.PASSWORD}]'
+          tags:
+            -
+              tag: component
+              value: 'clean cycle'
+          triggers:
+            -
+              uuid: 50536a1852594ce1a3778b7a94b6aca4
+              expression: 'last(/Litterrobot API by HTTP/clean.cycle.complete)>={$CLEAN.CYCLE.HIGH}'
+              name: 'More than {$CLEAN.CYCLE.HIGH} cycles completed today'
+              priority: HIGH
+              tags:
+                -
+                  tag: scope
+                  value: notice
+            -
+              uuid: 07a1d786feff4640ab368e0a4375f4e7
+              expression: 'last(/Litterrobot API by HTTP/clean.cycle.complete)>={$CLEAN.CYCLE.WARNING}'
+              name: 'More than {$CLEAN.CYCLE.WARNING} cycles completed today'
+              priority: WARNING
+              tags:
+                -
+                  tag: scope
+                  value: notice
+        -
+          uuid: 1e5905a6c2ab490bb3e35befdfb8b46f
+          name: 'Drawer: Full messages today'
+          type: DEPENDENT
+          key: drawer.full.messages
+          delay: '0'
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - '$.data[0].DF'
+          master_item:
+            key: 'get.activity[{$ROBOT.USERNAME},{$ROBOT.PASSWORD}]'
+          tags:
+            -
+              tag: component
+              value: drawer
+          triggers:
+            -
+              uuid: b49a0bbdf3104eef8a3639fcf583681a
+              expression: 'last(/Litterrobot API by HTTP/drawer.full.messages)>0'
+              name: 'Drawer is full'
+              priority: INFO
+              tags:
+                -
+                  tag: scope
+                  value: notice
+        -
+          uuid: 01b173d5a16045afa02fabf8a6b16e6a
+          name: 'Get robot activity'
+          key: 'get.activity[{$ROBOT.USERNAME},{$ROBOT.PASSWORD}]'
+          delay: 5m
+          history: '0'
+          trends: '0'
+          value_type: TEXT
+          tags:
+            -
+              tag: component
+              value: raw
+        -
+          uuid: 0697b4432eb444db8c8633583eff1a4a
+          name: 'Get robot insights'
+          key: 'get.insights[{$ROBOT.USERNAME},{$ROBOT.PASSWORD}]'
+          delay: 1h
+          history: '0'
+          trends: '0'
+          value_type: TEXT
+          tags:
+            -
+              tag: component
+              value: raw
+        -
+          uuid: 9cd2dafbc2bc4499838d311263204f50
+          name: 'Get robot info'
+          key: 'get.robots[{$ROBOT.USERNAME},{$ROBOT.PASSWORD}]'
+          delay: 15m
+          history: '0'
+          trends: '0'
+          value_type: TEXT
+          tags:
+            -
+              tag: component
+              value: raw
+        -
+          uuid: fd1fe15190874546a3dd5e0f1b07a6a3
+          name: 'Cycles: Average number in 30 days'
+          type: DEPENDENT
+          key: robot.average.cycles
+          delay: '0'
+          value_type: FLOAT
+          preprocessing:
+            -
+              type: REGEX
+              parameters:
+                - 'averaging\s([0-9.]+)\scycles'
+                - \1
+          master_item:
+            key: 'get.insights[{$ROBOT.USERNAME},{$ROBOT.PASSWORD}]'
+          tags:
+            -
+              tag: component
+              value: 'clean cycle'
+        -
+          uuid: 4039288296e44f40892949c4d772576b
+          name: 'System: ID'
+          type: DEPENDENT
+          key: robot.id
+          delay: '0'
+          trends: '0'
+          value_type: CHAR
+          preprocessing:
+            -
+              type: REGEX
+              parameters:
+                - 'id:\s([A-Za-z-.0-9]+)'
+                - \1
+          master_item:
+            key: 'get.robots[{$ROBOT.USERNAME},{$ROBOT.PASSWORD}]'
+          tags:
+            -
+              tag: component
+              value: system
+        -
+          uuid: e756f34ff83c49568fb21a84d4977758
+          name: 'System: Name'
+          type: DEPENDENT
+          key: robot.name
+          delay: '0'
+          trends: '0'
+          value_type: CHAR
+          inventory_link: NAME
+          preprocessing:
+            -
+              type: REGEX
+              parameters:
+                - 'Name:\s([A-Za-z-.]+)'
+                - \1
+          master_item:
+            key: 'get.robots[{$ROBOT.USERNAME},{$ROBOT.PASSWORD}]'
+          tags:
+            -
+              tag: component
+              value: system
+        -
+          uuid: 2e1a955070d746249a7139067b56613b
+          name: 'System: Serial Number'
+          type: DEPENDENT
+          key: robot.serial
+          delay: '0'
+          trends: '0'
+          value_type: CHAR
+          preprocessing:
+            -
+              type: REGEX
+              parameters:
+                - 'Serial:\s([A-Za-z-.0-9]+)'
+                - \1
+          master_item:
+            key: 'get.robots[{$ROBOT.USERNAME},{$ROBOT.PASSWORD}]'
+          tags:
+            -
+              tag: component
+              value: system
+        -
+          uuid: b4f67d8d0cdb4ce485fd54fb3f191bf9
+          name: 'Cycles: Total number in 30 days'
+          type: DEPENDENT
+          key: robot.total.cycles
+          delay: '0'
+          preprocessing:
+            -
+              type: REGEX
+              parameters:
+                - 'Completed\s([0-9]+)\scycles'
+                - \1
+          master_item:
+            key: 'get.insights[{$ROBOT.USERNAME},{$ROBOT.PASSWORD}]'
+          tags:
+            -
+              tag: component
+              value: 'clean cycle'
+      macros:
+        -
+          macro: '{$CLEAN.CYCLE.HIGH}'
+          value: '15'
+        -
+          macro: '{$CLEAN.CYCLE.WARNING}'
+          value: '13'
+        -
+          macro: '{$ROBOT.PASSWORD}'
+        -
+          macro: '{$ROBOT.USERNAME}'

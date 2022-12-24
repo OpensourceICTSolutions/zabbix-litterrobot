@@ -12,13 +12,14 @@ from datetime import datetime
 import json
 import time
 import re
+import sys
 from datetime import datetime
 
 from pylitterbot import Account
 
 # Set email and password for initial authentication.
-username = "EMAIL HERE"
-password = "PASSWORD HERE"
+username = sys.argv[1]
+password = sys.argv[2]
 
 # Declare search variable
 date = datetime.today().strftime('%Y-%m-%d')
