@@ -8,12 +8,13 @@
 #date: 25-12-2022
 #
 import asyncio
+import sys
 
 from pylitterbot import Account
 
 # Set email and password for initial authentication.
-username = "EMAIL HERE"
-password = "PASSWORD HERE"
+username = sys.argv[1]
+password = sys.argv[2]
 
 async def main():
     # Create an account.
