@@ -24,7 +24,7 @@ password = sys.argv[2]
 # Declare search variable
 date = datetime.today().strftime('%Y-%m-%d')
 clean_cycle_complete = r"{}[A-Za-z0-9:.+\s]+Clean Cycle Complete".format(date)
-drawer_full = r"{}[A-Za-z0-9:.+\s]+Drawer Full".format(date)
+drawer_full = r"{}[A-Za-z0-9:.+\s]+Drawer[\sA-Za-z]+Full".format(date)
 
 async def main():
     # Create an account.
